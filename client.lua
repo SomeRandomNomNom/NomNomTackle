@@ -1,4 +1,5 @@
 local isTackling = false
+local canTackle = false
 local dict = 'anim@sports@ballgame@handball@'
 
 local function doTackle()
@@ -10,6 +11,7 @@ local function doTackle()
 				local coords = GetEntityCoords(cache.ped)
 				local closestPlayer = lib.getClosestPlayer(coords, 1, false)
 				if closestPlayer then 
+					if not canTackle then break end
 					tackle = true
 					targetId = GetPlayerServerId(closestPlayer)
 					TriggerServerEvent('NomNomTackle:server:TacklePlayer', targetId, coords)
@@ -20,7 +22,11 @@ local function doTackle()
     end)
     lib.requestAnimDict(dict, 2000)
     TaskPlayAnim(cache.ped, dict, 'ball_rstop_r_slide', 8.0, 8.0, -1, 2, 0, false, false, false)
-    Wait(GetAnimDuration(dict, 'ball_rstop_r_slide') * 1000)
+    Wait(GetAnimDuration(dict, 'ball_rstop_r_slide') * 200)
+	canTackle = true 
+	Wait(GetAnimDuration(dict, 'ball_rstop_r_slide') * 300)
+	canTackle = false
+	Wait(GetAnimDuration(dict, 'ball_rstop_r_slide') * 500)
     TaskPlayAnim(cache.ped, dict, 'ball_get_up', 8.0, 8.0, -1, 01, 0, false, false, false)
     Wait(GetAnimDuration(dict, 'ball_get_up') * 500)
     StopAnimTask(cache.ped, dict, 'ball_get_up', 1.0)
